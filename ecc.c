@@ -1,3 +1,10 @@
+/*
+  IMPLEMENTAÇÃO DA MULTIPLICAÇÃO DE UM PONTO DE CURVA ELIPTICA POR ESCALAR
+  Alunos:
+    - Gustavo Eugênio de Souza Moraes (RA 620238)
+    - Rafael Pereira Alonso           (RA 620084)
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <gmp.h>
