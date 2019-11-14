@@ -28,13 +28,13 @@ int main(){
       qx = rx;
       qy = ry;
 
-      printf("(%d, %d) + (%d, %d)\n", qx, qy, gx, gy);
+      // printf("(%d, %d) + (%d, %d)\n", qx, qy, gx, gy);
 
       if (qx == 0 && qy == 0) {
         rx = gx;
         ry = gy;
       } else if(is_inverse(qx, qy, gx, gy, p)){
-        printf("(%d, %d) é inverso de (%d, %d)\n", gx, gy, qx, qy);
+        // printf("(%d, %d) é inverso de (%d, %d)\n", gx, gy, qx, qy);
         rx = 0;
         ry = 0;
       } else {
@@ -43,26 +43,26 @@ int main(){
           inverse = extendedAlg(p, modulo(2 * gy, p));
           delta = modulo((3 * (gx * gx) + a), p) * inverse;
           delta = modulo(delta, p);
-          printf("Delta: (3 * %d^2 + %d) / (2 * %d) mod %d = ", gx, a, gy, p);
-          printf("%d / %d mod %d = ", modulo((3 * (gx * gx) + a), p), modulo(2 * gy, p), p);
-          printf("%d * %lu mod %d = %d\n", modulo((3 * (gx * gx) + a), p), inverse, p, delta);
+          // printf("Delta: (3 * %d^2 + %d) / (2 * %d) mod %d = ", gx, a, gy, p);
+          // printf("%d / %d mod %d = ", modulo((3 * (gx * gx) + a), p), modulo(2 * gy, p), p);
+          // printf("%d * %lu mod %d = %d\n", modulo((3 * (gx * gx) + a), p), inverse, p, delta);
         } else {
           // set delta equal to (Gy – Qy) / (Gx - Qx) mod p
           inverse = extendedAlg(p, modulo(gx - qx, p));
           delta = modulo((gy - qy), p) * inverse;
           delta = modulo(delta, p);
-          printf("Delta: (%d - %d) / (%d - %d) mod %d = ", gy, qy, gx, qx, p);
-          printf("%d / %d mod %d = ", modulo((gy - qy), p), modulo(gx - qx, p), p);
-          printf("%d * %lu mod %d = %d\n", modulo((gy - qy), p), inverse, p, delta);
+          // printf("Delta: (%d - %d) / (%d - %d) mod %d = ", gy, qy, gx, qx, p);
+          // printf("%d / %d mod %d = ", modulo((gy - qy), p), modulo(gx - qx, p), p);
+          // printf("%d * %lu mod %d = %d\n", modulo((gy - qy), p), inverse, p, delta);
         }
 
         // calculate the new Rx = ( delta^2 - Qx - Gx ) mod p
         rx = modulo((delta * delta - qx - gx), p);
-        printf("Rx: ( %d^2 - %d - %d ) mod %d = %d\n", delta, qx, gx, p, rx);
+        // printf("Rx: ( %d^2 - %d - %d ) mod %d = %d\n", delta, qx, gx, p, rx);
 
         // calculate the new Yx = ( delta * (Qx – Rx) - Qy ) mod p
         ry = modulo((delta * (qx - rx) - qy), p);
-        printf("Ry: ( %d * (%d – %d) - %d ) mod %d = %d\n\n", delta, qx, rx, qy, p, ry);
+        // printf("Ry: ( %d * (%d – %d) - %d ) mod %d = %d\n\n", delta, qx, rx, qy, p, ry);
       }
 
       n--;
