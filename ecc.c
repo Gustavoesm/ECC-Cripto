@@ -3,9 +3,11 @@
 #include <gmp.h>
 
 unsigned long extendedAlg(int a, int b);
+int modulo(int a, int b);
+int is_inverse(int qx, int qy, int gx, int gy, int p);
 
 int main(){
-  int n, a, p, gx, gy, rx, ry, delta;
+  int n, a, p, gx, gy, qx, qy, rx, ry, delta;
   unsigned long inverse;
 
   // take the first parameter (n)
@@ -23,22 +25,45 @@ int main(){
     n--;
     // (n-1) times do
     while (n != 0){
-      if(gx == rx && gy == ry){
-        // set delta equal to (3 * Gx^2 + a) / (2 * Gy) mod p
-        inverse = extendedAlg(p, (2 * gy));
-        delta = ((3 * (gx * gx) + a) % p) * inverse;
-        delta = delta % p;
-      } else {
-        // set delta equal to (Ry – Gy) / (Rx - Gx) mod p
-        inverse = extendedAlg(p, (rx - gx));
-        delta = ((ry - gy) % p) * inverse;
-        delta = delta % p;
-      }
+      qx = rx;
+      qy = ry;
 
-      // calculate the new Rx = ( delta * 2 - Gx - Rx ) mod p
-      rx = (delta * 2 - gx - rx) % p;
-      // calculate the new Yx = ( delta * (Gx – Rx) - Gy ) mod p
-      ry = (delta * (gx - rx) - gy) % p;
+      printf("(%d, %d) + (%d, %d)\n", qx, qy, gx, gy);
+
+      if (qx == 0 && qy == 0) {
+        rx = gx;
+        ry = gy;
+      } else if(is_inverse(qx, qy, gx, gy, p)){
+        printf("(%d, %d) é inverso de (%d, %d)\n", gx, gy, qx, qy);
+        rx = 0;
+        ry = 0;
+      } else {
+        if(gx == qx && gy == qy){ // if P == Q
+          // set delta equal to (3 * Gx^2 + a) / (2 * Gy) mod p
+          inverse = extendedAlg(p, modulo(2 * gy, p));
+          delta = modulo((3 * (gx * gx) + a), p) * inverse;
+          delta = modulo(delta, p);
+          printf("Delta: (3 * %d^2 + %d) / (2 * %d) mod %d = ", gx, a, gy, p);
+          printf("%d / %d mod %d = ", modulo((3 * (gx * gx) + a), p), modulo(2 * gy, p), p);
+          printf("%d * %lu mod %d = %d\n", modulo((3 * (gx * gx) + a), p), inverse, p, delta);
+        } else {
+          // set delta equal to (Gy – Qy) / (Gx - Qx) mod p
+          inverse = extendedAlg(p, modulo(gx - qx, p));
+          delta = modulo((gy - qy), p) * inverse;
+          delta = modulo(delta, p);
+          printf("Delta: (%d - %d) / (%d - %d) mod %d = ", gy, qy, gx, qx, p);
+          printf("%d / %d mod %d = ", modulo((gy - qy), p), modulo(gx - qx, p), p);
+          printf("%d * %lu mod %d = %d\n", modulo((gy - qy), p), inverse, p, delta);
+        }
+
+        // calculate the new Rx = ( delta^2 - Qx - Gx ) mod p
+        rx = modulo((delta * delta - qx - gx), p);
+        printf("Rx: ( %d^2 - %d - %d ) mod %d = %d\n", delta, qx, gx, p, rx);
+
+        // calculate the new Yx = ( delta * (Qx – Rx) - Qy ) mod p
+        ry = modulo((delta * (qx - rx) - qy), p);
+        printf("Ry: ( %d * (%d – %d) - %d ) mod %d = %d\n\n", delta, qx, rx, qy, p, ry);
+      }
 
       n--;
     }
@@ -50,6 +75,22 @@ int main(){
   }
 
   return 0;
+}
+
+int is_inverse(int qx, int qy, int gx, int gy, int p){
+  if (qx != gx) return 0;
+
+  if (gy == modulo(p-qy, p)) return 1;
+
+  return 0;
+}
+
+int modulo(int a, int b){
+  int res = a % b;
+  while(res < 0){
+    res += b;
+  }
+  return res;
 }
 
 unsigned long extendedAlg(int a, int b){
